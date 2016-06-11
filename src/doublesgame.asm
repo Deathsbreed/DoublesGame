@@ -12,11 +12,17 @@
 # command which will allow you to skip a double giving you the correct
 # answer, and the `exit' command which will close the game.
 #
+# Variables:
+#   %rbx    Correct result of double
+#   %r10    Power used in double equation
+#
 .section .data
     copyright:
         .ascii "Copyright (c) Nicolas A. Ortega\n"
     welcome:
         .ascii "Welcome to the doubles game.\n"
+    base:
+        .ascii "2^"
 
 .section .text
     .global _start
@@ -29,6 +35,14 @@ _start:
     movq $welcome, %rdi             # First argument (string)
     movq $29, %rsi                  # Second argument (string size)
     call print
+
+    movq $2, %rbx                   # Move first result to %rbx
+    movq $1, %r10                   # Move power number to %r10
+    main_loop:                      # Main loop of the program
+        movq $base, %rdi            # First argument (string)
+        movq $2, %rsi               # Second argument (string size)
+        call print
+        # TODO: Convert number to character
 
     movq $60, %rax                  # Define exit system call
     movq $0, %rdi                   # Return 0 on exit
