@@ -12,6 +12,6 @@ _start:
     mov $29, %rdx                   # Give size of the string
     syscall
 
-    mov $60, %rax
-    mov $0, %rdi
+    mov $60, %rax                   # Define exit system call
+    mov $0, %rdi                    # Return 0 on exit
     syscall
