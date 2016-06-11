@@ -3,7 +3,7 @@ LINKER=ld
 OBJ=src/doublesgame.o
 
 %.o: %.asm
-	$(AS) -o $@ $<
+	$(AS) -g -o $@ $<
 
 doublesgame: $(OBJ)
 	mkdir -p bin/
