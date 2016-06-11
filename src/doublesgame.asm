@@ -11,7 +11,10 @@
 # are a `help' command, which displays the two other commands, the `answer'
 # command which will allow you to skip a double giving you the correct
 # answer, and the `exit' command which will close the game.
+#
 .section .data
+    copyright:
+        .ascii "Copyright (c) Nicolas A. Ortega\n"
     welcome:
         .ascii "Welcome to the doubles game.\n"
 
@@ -19,12 +22,31 @@
     .global _start
 
 _start:
-    mov $1, %rax                    # Define write syscall
-    mov $1, %rdi                    # Define stdout as out stream file
-    mov $welcome, %rsi              # Give the string
-    mov $29, %rdx                   # Give size of the string
+    movq $copyright, %rdi           # First argument (string)
+    movq $32, %rsi                  # Second argument (string size)
+    call print
+
+    movq $welcome, %rdi             # First argument (string)
+    movq $29, %rsi                  # Second argument (string size)
+    call print
+
+    movq $60, %rax                  # Define exit system call
+    movq $0, %rdi                   # Return 0 on exit
     syscall
 
-    mov $60, %rax                   # Define exit system call
-    mov $0, %rdi                    # Return 0 on exit
+#FUNCTION: PRINT
+# Description:
+#   Print to stdout.
+#
+# Arguments:
+#   %rdi    string to print
+#   %rsi    size of string
+#
+.type print, @function
+print:
+    movq %rsi, %rdx                 # Move string size for syscall
+    movq %rdi, %rsi                 # Move string for syscall
+    movq $1, %rax                   # Define write syscall
+    movq $1, %rdi                   # Define stdout as stream out file
     syscall
+    ret                             # Return back to the next instruction
