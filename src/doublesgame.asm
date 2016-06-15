@@ -42,7 +42,11 @@ _start:
         movq $base, %rdi            # First argument (string)
         movq $2, %rsi               # Second argument (string size)
         call print
-        # TODO: Convert number to character
+        pushq $0x3A                 # Push the `:' character onto the stack
+        movq %rsp, %rdi             # First argument (pointer to the `:' character)
+        movq $1, %rsi               # Second argument
+        call print
+        addq $8, %rsp               # We are no longer using that space in memory
 
     movq $60, %rax                  # Define exit system call
     movq $0, %rdi                   # Return 0 on exit
@@ -64,3 +68,15 @@ print:
     movq $1, %rdi                   # Define stdout as stream out file
     syscall
     ret                             # Return back to the next instruction
+
+#FUNCTION: PRINT_NUM
+# Description:
+#   Convert a number to its ASCII equivalent  and print it to stdout.
+#
+# Arguments:
+#   %rdi    number to print
+#
+.type print_num, @function
+print_num:
+    # TODO: Convert a number to ASCII and print it
+    ret
