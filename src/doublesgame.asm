@@ -18,7 +18,7 @@
 #
 .section .data
     copyright:
-        .ascii "Copyright (c) Nicolas A. Ortega\n"
+        .ascii "Copyright (c) 2016 Nicolas A. Ortega\n"
     welcome:
         .ascii "Welcome to the doubles game.\n"
     base:
@@ -29,7 +29,7 @@
 
 _start:
     movq $copyright, %rdi           # First argument (string)
-    movq $32, %rsi                  # Second argument (string size)
+    movq $37, %rsi                  # Second argument (string size)
     call print
 
     movq $welcome, %rdi             # First argument (string)
@@ -42,6 +42,8 @@ _start:
         movq $base, %rdi            # First argument (string)
         movq $2, %rsi               # Second argument (string size)
         call print
+        movq %r10, %rdi             # First argument
+        call print_num
         pushq $0x3A                 # Push the `:' character onto the stack
         movq %rsp, %rdi             # First argument (pointer to the `:' character)
         movq $1, %rsi               # Second argument
@@ -78,5 +80,22 @@ print:
 #
 .type print_num, @function
 print_num:
-    # TODO: Convert a number to ASCII and print it
+    movq %rdi, %rax                 # Number to divide from
+    movq $10, %r11                  # Number to divide by
+    movq $0, %r12                   # Digit counter
+    convert_digit_loop:
+        idivq %r11                  # %rax /= 10, %rdx = %rax % 10
+        addq $48, %rdx              # Get the ascii value of %rdx
+        pushq %rdx                  # Save it on the stack for later usage
+        incq %r12                   # Increment digit counter
+        cmpq $0, %rax               # Compare %rax to 0
+        jne convert_digit_loop      # If not zero redo loop
+
+    print_digit_loop:
+        movq $1, %rsi               # Second argument
+        popq %rdi                   # First argument
+        call print
+        decq %r12                   # Decrease digit counter
+        cmpq $0, %r12               # Compare
+        jne print_digit_loop        # If not zero redo loop
     ret
