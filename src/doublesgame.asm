@@ -28,48 +28,37 @@
     .global _start
 
 _start:
-    movq $copyright, %rdi           # First argument (string)
-    movq $37, %rsi                  # Second argument (string size)
-    call print
+    movq $1, %rax                   # Define write syscall
+    movq $1, %rdi                   # Define stdout as outstream
+    movq $copyright, %rsi           # Location of string in memory
+    movq $37, %rdx                  # String size
+    syscall
 
-    movq $welcome, %rdi             # First argument (string)
-    movq $29, %rsi                  # Second argument (string size)
-    call print
+    movq $welcome, %rsi             # Location of string in memory
+    movq $29, %rdx                  # String size
+    syscall                         # The other values are already set
 
     movq $2, %rbx                   # Move first result to %rbx
     movq $1, %r10                   # Move power number to %r10
     main_loop:                      # Main loop of the program
-        movq $base, %rdi            # First argument (string)
-        movq $2, %rsi               # Second argument (string size)
-        call print
+        movq $1, %rax               # Define write syscall
+        movq $1, %rdi               # Define stdout as outstream
+        movq $base, %rsi            # Location of string in memory
+        movq $2, %rdx               # String size
+        syscall                     # The other values are already set
         movq %r10, %rdi             # First argument
         call print_num
         pushq $0x3A                 # Push the `:' character onto the stack
-        movq %rsp, %rdi             # First argument (pointer to the `:' character)
-        movq $1, %rsi               # Second argument
-        call print
-        addq $8, %rsp               # We are no longer using that space in memory
+        movq $1, %rax               # Define write syscall
+        movq $1, %rdi               # Define stdout as outstream
+        movq %rsp, %rsi             # Location of string in memory
+        movq $1, %rdx               # String size
+        syscall
+        addq $8, %rsp               # Relocate stack pointer
 
     movq $60, %rax                  # Define exit system call
     movq $0, %rdi                   # Return 0 on exit
     syscall
-
-#FUNCTION: PRINT
-# Description:
-#   Print to stdout.
-#
-# Arguments:
-#   %rdi    string to print
-#   %rsi    size of string
-#
-.type print, @function
-print:
-    movq %rsi, %rdx                 # Move string size for syscall
-    movq %rdi, %rsi                 # Move string for syscall
-    movq $1, %rax                   # Define write syscall
-    movq $1, %rdi                   # Define stdout as stream out file
-    syscall
-    ret                             # Return back to the next instruction
 
 #FUNCTION: PRINT_NUM
 # Description:
@@ -92,9 +81,12 @@ print_num:
         jne convert_digit_loop      # If not zero redo loop
 
     print_digit_loop:
-        movq $1, %rsi               # Second argument
-        popq %rdi                   # First argument
-        call print
+        movq $1, %rax               # Define write syscall
+        movq $1, %rdi               # Define stdout as outstream
+        movq %rsp, %rsi             # Location of string in memory
+        movq $1, %rdx               # String size
+        syscall
+        addq $8, %rsp               # Relocate stack pointer
         decq %r12                   # Decrease digit counter
         cmpq $0, %r12               # Compare
         jne print_digit_loop        # If not zero redo loop
