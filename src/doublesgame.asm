@@ -17,12 +17,14 @@
         .ascii "Copyright (c) 2016 Nicolas A. Ortega\n\0"
     welcome:
         .ascii "Welcome to the doubles game.\n\0"
+    exponent:
+        .int 1
+    input:
+        .int 0
     base:
         .ascii "2^%d=\0"
     scan:
         .ascii "%d"
-    input:
-        .int 0
 
 .section .text
     .global _start
@@ -33,12 +35,17 @@ _start:
     movq $welcome, %rdi
     call printf
 
-    movq $1, %rsi
+    #call gameloop
+
+    movq $0, %rdi
+    call exit
+
+.type gameloop, @function
+gameloop:
+    movq $exponent, %rsi
     movq $base, %rdi
     call printf
     movq $input, %rsi
     movq $scan, %rdi
     call scanf
-
-    movq $0, %rdi
-    call exit
+    ret
