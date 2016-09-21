@@ -18,7 +18,11 @@
     welcome:
         .ascii "Welcome to the doubles game.\n\0"
     base:
-        .ascii "2^\0"
+        .ascii "2^%d=\0"
+    scan:
+        .ascii "%d"
+    input:
+        .int 0
 
 .section .text
     .global _start
@@ -28,6 +32,13 @@ _start:
     call printf
     movq $welcome, %rdi
     call printf
+
+    movq $1, %rsi
+    movq $base, %rdi
+    call printf
+    movq $input, %rsi
+    movq $scan, %rdi
+    call scanf
 
     movq $0, %rdi
     call exit
