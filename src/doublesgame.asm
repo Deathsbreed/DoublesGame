@@ -17,8 +17,6 @@
         .ascii "Copyright (c) 2016 Nicolas A. Ortega\n\0"
     welcome:
         .ascii "Welcome to the doubles game.\n\0"
-    exponent:
-        .int 1
     input:
         .int 0
     base:
@@ -35,14 +33,20 @@ _start:
     movq $welcome, %rdi
     call printf
 
-    #call gameloop
+    movq $1, %r10
+    pushq %r10
+
+    call gameloop
 
     movq $0, %rdi
     call exit
 
+#####
+# gameloop: The main loop for the minigame.
+#
 .type gameloop, @function
 gameloop:
-    movq $exponent, %rsi
+    movq 8(%rsp), %rsi
     movq $base, %rdi
     call printf
     movq $input, %rsi
