@@ -11,7 +11,10 @@ doublesgame: $(OBJ)
 		-o bin/$@ $^ \
 		-lc
 
-.PHONY: clean
+.PHONY: clean install
 
 clean:
 	rm $(OBJ)
+
+install:
+	install bin/doublesgame /usr/bin/
